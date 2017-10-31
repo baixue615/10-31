@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+</head>
+<style>
+*{
+    margin: 0;padding: 0
+}
+#div span{
+    display: inline-block;
+    margin: 10px;
+}
+p{
+	 width: 500px;
+	border:1px solid #ccc;
+    margin-top: 10px;
+}
+p span{
+    padding-left: 15px;
+}
+button{
+    width: 50px;
+    height:20px;
+    float: right;
+}
+textarea{
+	width:350px;
+	height: 250px;
+}
+</style>
+<body>
+<input type="text" id="ipt">
+<br><br>
+<textarea id="text"></textarea>
+<br>
+<input type="submit" id="but">
+<div id="div"></div>
+</body>
+</html>
+<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.js 
+
+"></script>
+<script>
+    $(function(){
+    /*增加*/
+    $('#but').click(function(){
+
+        var value= $('#ipt').val();
+        var val1=$('#text').val();  
+       if(value==""){
+        alert('要写东西哦')
+       }else{
+        $.ajax({
+            url:"http://localhost:3000/item/dta",
+            type:'POST',
+            data:{name:value,tit:val1},
+            success:function(e){
+             $.ajax({
+               url:"http://localhost:3000/item/list",
+               type:'post',
+                dataType:'json',
+            success:function(e){
+                for(var i in e){
+                    var str='';
+                    str+="<P>"+"<span>"+e[i].id+"</span>"+"<span>"+e[i].name+"</span>"+"<span>"+e[i].con+"</span>"+"<button class='buut' data-id='"+e[i].id+"'>删除</button>"+"</P>"
+                }
+                  $('#div').append(str)
+                 $('.buut').click(function(){
+                        var uid=$(this).attr('data-id');
+                         var that=$(this)
+                        $.ajax({
+                     url:"http://localhost:3000/item/del",
+                     type:'post',
+                     data:{id:uid},
+                     dataType:'json',
+                    success:function(e){
+                       that.parent().remove();
+                   }
+                        }) 
+                  })
+                 
+            }
+        })      
+            }
+        })      
+       }
+    }) 
+/*查询*/
+        
+             $.ajax({
+            url:"http://localhost:3000/item/list",
+            type:'post',
+            dataType:'json',
+            success:function(e){
+                for(var i in e){
+                    $('#div').append("<P>"+"<span>"+e[i].id+"</span>"+"<span>"+e[i].name+"</span>"+"<span>"+e[i].con+"</span>"+"<button class='buut' data-id='"+e[i].id+"'>删除</button>"+"</P>")
+                }
+                 $('.buut').click(function(){
+                        var uid=$(this).attr('data-id');
+                         var that=$(this)
+                        $.ajax({
+                     url:"http://localhost:3000/item/del",
+                     type:'post',
+                     data:{id:uid},
+                     dataType:'json',
+                    success:function(e){
+                       that.parent().remove();
+                   }
+                        }) 
+                  })
+                 
+            }
+        })      
+        })              
+</script>
